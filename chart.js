@@ -14,16 +14,18 @@ Chart.prototype = {
 		this._id = config.id || null;
 		if( !this._id ) return false;
 
-		this._canvas = document.getElementById( this._id );
-		if( !this._canvas ) return false;
-		this._ctx = this._canvas.getContext( '2d' );
+		this._canvasEl = document.getElementById( this._id );
+		if( !this._canvasEl ) return false;
+		this._ctx = this._canvasEl.getContext( '2d' );
 
 		this._data = config.data || [];
 		this._title = config.title || '';
 
-		this._c = {};
-		this._c.w = this._canvas.getAttribute( 'width' ) || 320;
-		this._c.h = this._canvas.getAttribute( 'height' ) || 320;
+		this._canvas = {};
+		this._canvas.w = this._canvasEl.getAttribute( 'width' ) || 320;
+		this._canvas.h = this._canvasEl.getAttribute( 'height' ) || 320;
+		this._canvas.cx = this._canvas.w / 2;
+		this._canvas.cy = this._canvas.h / 2;
 
 		return true;
 	},
@@ -48,27 +50,31 @@ Chart.prototype = {
 	},
 
 	_clear: function(){
-		this._ctx.clearRect( 0, 0, this._c.w, this._c.h );
+		this._ctx.clearRect( 0, 0, this._canvas.w, this._canvas.h );
 	},
 
 	_drawChart: function( ctx ){
 
 	},
 
-	_degToRad: function( deg ){
-		return deg * Math.PI / 180;
-	},
+	// _degToRad: function( deg ){
+	// 	return deg * Math.PI / 180;
+	// },
 
-	_radToDeg: function( rad ){
-		return rad * 180 / Math.PI;
-	},
+	// _radToDeg: function( rad ){
+	// 	return rad * 180 / Math.PI;
+	// },
 
-	_perToRad: function( per ){
-		return per * 2 * Math.PI / 100;
-	},
+	// _perToRad: function( per ){
+	// 	return per * 2 * Math.PI / 100;
+	// },
 
-	_perToDeg: function( per ){
-		return per * 360 / 100;
+	// _perToDeg: function( per ){
+	// 	return per * 360 / 100;
+	// },
+
+	_getRad: function( val, sum ){
+		return val / sum * 2 * Math.PI;
 	}
 
 };

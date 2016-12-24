@@ -2,6 +2,8 @@ var PieChart = function( config ){ this.init( config ); };
 PieChart.prototype = extend( Chart, {
 	constructor: PieChart,
 
+	_arcsOffset: -Math.PI / 2, // -90deg in rad
+
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
 		this._buildArcs();
@@ -11,16 +13,20 @@ PieChart.prototype = extend( Chart, {
 	_buildArcs: function(){
 		var $this = this;
 
-		this._offset = -Math.PI / 2; // -90deg in rad
+		this._sum = 0;
+
+		this._each( this._data, function( key, val ){
+			$this._sum += val.val;
+		} );		
 
 		this._arcsArr = [];
-		var arcData, arcOffset = this._offset;
+		var arcData, arcOffset = this._arcsOffset;
 		this._each( this._data, function( key, val ){
 			arcData = val;
-			arcData.val = $this._perToRad( arcData.val );
+			arcData.angle = $this._getRad( val.val, $this._sum );
 			arcData.offset = arcOffset;
 			$this._arcsArr.push( new PieChartArc( $this, arcData ) );
-			arcOffset += arcData.val;
+			arcOffset += arcData.angle;
 		} );
 
 	},
@@ -58,13 +64,14 @@ PieChartArc.prototype = {
 		this._ctx = chart._ctx;
 		if( !data ) return false;
 		this._val = data.val || 0;
+		this._angle = data.angle || 0;
+		this._offset = data.offset || 0;
 		this._color = data.color || '#000';
 		this._img = data.img || null;
-		this._offset = data.offset || 0;
 
 		this._imgReady = false;
 
-		this._c = chart._c;
+		this._canvas = chart._canvas;
 
 		return true;
 	},
@@ -85,11 +92,7 @@ PieChartArc.prototype = {
 
 		var arc = {};
 		arc.b = this._offset;
-		arc.e = this._offset + this._val;
-
-		var c = {};
-		c.x = this._c.w / 2;
-		c.y = this._c.h / 2;
+		arc.e = this._offset + this._angle;
 
 		// var cImg = {};
 		// cImg.x = this._img.width / 2;
@@ -98,19 +101,19 @@ PieChartArc.prototype = {
 		ctx.save(); // arc
 
 		ctx.beginPath();
-		ctx.arc( c.x, c.y, 160, arc.b, arc.e, false );
-		// ctx.lineTo( c.x, c.y ); // full pie
-		ctx.arc( c.x, c.y, 50, arc.e, arc.b, true ); // arc pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, 160, arc.b, arc.e, false );
+		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, 50, arc.e, arc.b, true ); // arc pie
 
 		ctx.save(); // img
 
 		ctx.clip();
-		if( this._img && this._imgReady ){
-			ctx.drawImage( this._img, 0, 0, this._img.height, this._img.height, 0, 0, this._c.w, this._c.h );
+		if( this._imgReady ){
+			ctx.drawImage( this._img, 0, 0, this._img.height, this._img.height, 0, 0, this._canvas.w, this._canvas.h );
 			ctx.globalCompositeOperation = 'color';
 		}
 		ctx.fillStyle = this._color;
-		ctx.fillRect( 0, 0, this._c.w, this._c.h );
+		ctx.fillRect( 0, 0, this._canvas.w, this._canvas.h );
 		
 		ctx.restore(); // img
 
