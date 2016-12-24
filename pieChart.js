@@ -91,17 +91,24 @@ PieChartArc.prototype = {
 	},
 
 	render: function(){
-		this._drawArc( this._ctx );
+		this._drawArc( this._ctx, 80, 140 );
+
+		this._ctx.save(); // alpha
+
+		this._ctx.globalAlpha = 0.5;
+		this._drawArc( this._ctx, 140, 160 );
+
+		this._ctx.restore(); // alpha
 	},
 
-	_drawArc: function( ctx ){
+	_drawArc: function( ctx, ai, ao ){
 
 		ctx.save(); // arc
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, 160, this._arc.b, this._arc.e, false );
+		ctx.arc( this._canvas.cx, this._canvas.cy, ao, this._arc.b, this._arc.e, false );
 		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
-		ctx.arc( this._canvas.cx, this._canvas.cy, 50, this._arc.e, this._arc.b, true ); // arc pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, ai, this._arc.e, this._arc.b, true ); // arc pie
 
 		ctx.save(); // img
 
