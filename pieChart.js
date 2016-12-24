@@ -68,16 +68,22 @@ PieChartArc.prototype = {
 		this._offset = data.offset || 0;
 		this._color = data.color || '#000';
 		this._img = data.img || null;
+		this._canvas = chart._canvas;
+
+		this._arc = {};
+		this._arc.b = this._offset;
+		this._arc.e = this._offset + this._angle;
 
 		this._imgReady = false;
-
-		this._canvas = chart._canvas;
 
 		return true;
 	},
 
 	setOffset: function( offset ){
 		this._offset = offset;
+
+		this._arc.b = this._offset;
+		this._arc.e = this._offset + this._angle;
 	},
 
 	update: function( t ){
@@ -90,20 +96,12 @@ PieChartArc.prototype = {
 
 	_drawArc: function( ctx ){
 
-		var arc = {};
-		arc.b = this._offset;
-		arc.e = this._offset + this._angle;
-
-		// var cImg = {};
-		// cImg.x = this._img.width / 2;
-		// cImg.y = this._img.height / 2;
-
 		ctx.save(); // arc
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, 160, arc.b, arc.e, false );
+		ctx.arc( this._canvas.cx, this._canvas.cy, 160, this._arc.b, this._arc.e, false );
 		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
-		ctx.arc( this._canvas.cx, this._canvas.cy, 50, arc.e, arc.b, true ); // arc pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, 50, this._arc.e, this._arc.b, true ); // arc pie
 
 		ctx.save(); // img
 
