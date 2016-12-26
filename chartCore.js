@@ -68,6 +68,13 @@ ChartCore.prototype = {
 		}
 	},
 
+	_getOffset: function( el ){
+		if( !el ) return { l: 0, t: 0 };
+		var eOff = { l: el.offsetLeft, t: el.offsetTop };
+		var pOff = this._getOffset( el.offsetParent );
+		return { l: eOff.l + pOff.l, t: eOff.t + pOff.t };
+	},
+
 	init: function(){
 		this._setVars();
 		this._startLoop();
