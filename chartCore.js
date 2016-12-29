@@ -82,7 +82,7 @@ ChartCore.prototype = {
 		var $this = this;
 		setTimeout( function(){
 			$this._stopLoop();
-		}, 5000 );
+		}, 10000 );
 	},
 
 	_setVars: function(){

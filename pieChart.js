@@ -7,6 +7,7 @@ PieChart.prototype = extend( Chart, {
 
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
+		this._setEvents();
 		this._buildArcs();
 		this.checkReady();
 	},
@@ -45,6 +46,13 @@ PieChart.prototype = extend( Chart, {
 			this._ready = true;
 			window._ChartCore.addChart( this );
 		}
+	},
+
+	update: function( t ){
+		if( !this._ready ) return;
+		this._each( this._arcsArr, function( key, val ){
+			val.update();
+		} );
 	},
 
 	_drawChart: function( ctx ){

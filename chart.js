@@ -4,7 +4,8 @@ Chart.prototype = {
 
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
-		window._ChartCore.addChart( $this );
+		this._setEvents();
+		window._ChartCore.addChart( this );
 	},
 
 	_setVars: function( config ){
@@ -27,7 +28,49 @@ Chart.prototype = {
 		this._canvas.cx = this._canvas.w / 2;
 		this._canvas.cy = this._canvas.h / 2;
 
+		this._cursor = {};
+		this._cursor.pos = {};
+		this._cursor.pos.x = 0;
+		this._cursor.pos.y = 0;
+		// this._cursor.hit = false;
+
 		return true;
+	},
+
+	_setEvents: function(){
+		var $this = this;
+
+		this._canvasEl.addEventListener('mouseenter', function(e){
+			$this._mouseenterEvent( e );
+		} );
+
+		this._canvasEl.addEventListener('mousemove', function(e){
+			$this._mousemoveEvent( e );
+		} );
+
+		this._canvasEl.addEventListener('mouseleave', function(e){
+			$this._mouseleaveEvent( e );
+		} );
+	},
+
+	_mouseenterEvent: function( e ){
+		this._cursor.pos = this._recalcCursorPos( e );
+	},
+
+	_mousemoveEvent: function( e ){
+		this._cursor.pos = this._recalcCursorPos( e );
+	},
+
+	_mouseleaveEvent: function( e ){
+		this._cursor.pos = this._recalcCursorPos( e );
+	},
+
+	_recalcCursorPos: function( e ){	
+		var offset = window._ChartCore._getOffset( this._canvasEl );
+		return {
+			x: ( e.pageX - offset.l ) * ( this._canvas.w / this._canvasEl.offsetWidth ),
+			y: ( e.pageY - offset.t ) * ( this._canvas.h / this._canvasEl.offsetHeight )
+		};
 	},
 
 	_each: function( arr, fn ){
@@ -39,9 +82,7 @@ Chart.prototype = {
 		}
 	},
 
-	update: function( t ){
-
-	},
+	update: function( t ){},
 
 	render: function(){
 		this._clear();
@@ -53,9 +94,7 @@ Chart.prototype = {
 		this._ctx.clearRect( 0, 0, this._canvas.w, this._canvas.h );
 	},
 
-	_drawChart: function( ctx ){
-
-	},
+	_drawChart: function( ctx ){},
 
 	// _degToRad: function( deg ){
 	// 	return deg * Math.PI / 180;
