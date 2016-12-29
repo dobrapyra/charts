@@ -78,11 +78,6 @@ ChartCore.prototype = {
 	init: function(){
 		this._setVars();
 		this._startLoop();
-
-		var $this = this;
-		setTimeout( function(){
-			$this._stopLoop();
-		}, 10000 );
 	},
 
 	_setVars: function(){

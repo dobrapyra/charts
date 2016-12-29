@@ -70,6 +70,7 @@ PieChartArc.prototype = {
 
 	_ready: false,
 	_imgReady: false,
+	_hover: false,
 
 	init: function( chart, data ){
 		if( !this._setVars( chart, data) ) return;
@@ -85,6 +86,7 @@ PieChartArc.prototype = {
 		this._color = data.color || '#000';
 		this._imgSrc = data.img || null;
 		this._canvas = chart._canvas;
+		this._cursor = chart._cursor;
 
 		this._arc = {};
 		this._arc.b = this._offset;
@@ -134,7 +136,7 @@ PieChartArc.prototype = {
 	},
 
 	update: function( t ){
-
+		this._checkHover( this._ctx, this._cursor.pos );
 	},
 
 	render: function(){
@@ -144,7 +146,12 @@ PieChartArc.prototype = {
 
 		this._ctx.save(); // alpha
 
-		this._ctx.globalAlpha = 0.5;
+		if( this._hover ){
+			this._ctx.globalAlpha = 1;
+		}else{
+			this._ctx.globalAlpha = 0.5;
+		}
+		// this._ctx.globalAlpha = 0.5;
 		this._drawArc( this._ctx, 140, 160, null );
 
 		this._ctx.restore(); // alpha
@@ -172,6 +179,21 @@ PieChartArc.prototype = {
 		ctx.restore(); // img
 
 		ctx.restore(); // arc
+
+	},
+
+	_checkHover: function( ctx, pos ){
+		
+		ctx.save();
+
+		ctx.beginPath();
+		ctx.arc( this._canvas.cx, this._canvas.cy, 160, this._arc.b, this._arc.e, false );
+		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, 80, this._arc.e, this._arc.b, true ); // arc pie
+
+		this._hover = ctx.isPointInPath( pos.x, pos.y );
+
+		ctx.restore();
 
 	}
 
