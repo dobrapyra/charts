@@ -2,10 +2,14 @@ var Chart = function( config ){ this.init( config ); };
 Chart.prototype = {
 	constructor: Chart,
 
+	_ready: false,
+	_offset: 0,
+
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
 		this._setEvents();
-		window._ChartCore.addChart( this );
+		this._buildParts();
+		this.checkReady();
 	},
 
 	_setVars: function( config ){
@@ -37,6 +41,34 @@ Chart.prototype = {
 		return true;
 	},
 
+	_buildParts: function(){
+		var $this = this;
+
+		this._min = this._data[0].val;
+		this._max = 0;
+		this._sum = 0;
+
+		this._each( this._data, function( key, val ){
+			if( val.val < $this._min ) $this._min = val.val;
+			if( val.val > $this._max ) $this._max = val.val;
+			$this._sum += val.val;
+		} );		
+
+		this._partsArr = [];
+		var partData, partOffset = this._offset;
+		this._each( this._data, function( key, val ){
+			partData = val;
+			partData.relVal = $this._getRelVal( val.val, $this._sum );
+			partData.offset = partOffset;
+			partData.min = $this._min;
+			partData.max = $this._max;
+			partData.sum = $this._sum;
+			$this._partsArr.push( $this._createPart( $this, partData ) );
+			partOffset += partData.relVal;
+		} );
+
+	},
+
 	_setEvents: function(){
 		var $this = this;
 
@@ -51,6 +83,14 @@ Chart.prototype = {
 		this._canvasEl.addEventListener('mouseleave', function(e){
 			$this._mouseleaveEvent( e );
 		} );
+	},
+
+	_createPart: function( chart, partData ){
+		return new ChartPart( chart, partData );
+	},
+
+	_getRelVal: function( val, sum ){
+		return val;
 	},
 
 	_mouseenterEvent: function( e ){
@@ -82,38 +122,121 @@ Chart.prototype = {
 		}
 	},
 
-	update: function( t ){},
+	checkReady: function(){
+		if( this._ready ) return;
+
+		var allReady = true;
+		this._each( this._partsArr, function( key, val ){
+			if( !val.checkReady() ){
+				allReady = false;
+				return false;
+			}
+		} );
+
+		if( allReady ){
+			this._ready = true;
+			window._ChartCore.addChart( this );
+		}
+	},
+
+	update: function( t ){
+		if( !this._ready ) return;
+		this._each( this._partsArr, function( key, val ){
+			val.update( t );
+		} );
+	},
 
 	render: function(){
-		this._clear();
-
-		this._drawChart( this._ctx );
+		if( !this._ready ) return;
+		this._each( this._partsArr, function( key, val ){
+			val.render();
+		} );
 	},
 
-	_clear: function(){
+	clear: function(){
 		this._ctx.clearRect( 0, 0, this._canvas.w, this._canvas.h );
+	}
+
+};
+
+var ChartPart = function( chart, data ){ this.init( chart, data ); };
+ChartPart.prototype = {
+	constructor: ChartPart,
+
+	_ready: false,
+	_imgReady: false,
+	_hover: false,
+
+	init: function( chart, data ){
+		if( !this._setVars( chart, data) ) return;
 	},
 
-	_drawChart: function( ctx ){},
+	_setVars: function( chart, data ){
+		this._chart = chart;
+		this._ctx = chart._ctx;
+		if( !data ) return false;
+		this._val = data.val || 0;
+		this._relVal = data.relVal || 0;
+		this._offset = data.offset || 0;
+		this._color = data.color || '#000';
+		this._imgSrc = data.img || null;
+		this._canvas = chart._canvas;
+		this._cursor = chart._cursor;
 
-	// _degToRad: function( deg ){
-	// 	return deg * Math.PI / 180;
-	// },
+		this._setExtraVars( data );
+		this._loadImage();
 
-	// _radToDeg: function( rad ){
-	// 	return rad * 180 / Math.PI;
-	// },
+		return true;
+	},
 
-	// _perToRad: function( per ){
-	// 	return per * 2 * Math.PI / 100;
-	// },
+	_setExtraVars: function( data ){},
 
-	// _perToDeg: function( per ){
-	// 	return per * 360 / 100;
-	// },
+	_loadImage: function(){
+		var $this = this;
 
-	_getRad: function( val, sum ){
-		return val / sum * 2 * Math.PI;
-	}
+		if( !this._imgSrc ){ // no img
+
+			this._img = null;
+			this._ready = true;
+			this._chart.checkReady();
+
+		}else{ // img
+
+			this._img = new Image();
+			this._img.onload = function(){
+				$this._imgReady = true;
+				$this._ready = true;
+				$this._chart.checkReady();
+			};	
+			this._img.src = this._imgSrc;
+
+		}
+	},
+
+	checkImgReady: function(){
+		return this._imgReady;
+	},
+
+	checkReady: function(){
+		return this._ready;
+	},
+
+	setOffset: function( offset ){
+		this._offset = offset;
+	},
+
+	update: function( t ){
+		if( !this._ready ) return;
+
+		this._checkHover( this._ctx, this._cursor.pos );
+	},
+
+	render: function(){
+		if( !this._ready ) return;
+
+		// draw
+	},
+
+	_checkHover: function( ctx, pos ){}
 
 };

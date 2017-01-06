@@ -121,6 +121,7 @@ ChartCore.prototype = {
 
 	_render: function(){
 		this._each( this._chartsArr, function( key, val ){
+			val.clear();
 			val.render();
 		} );
 	},

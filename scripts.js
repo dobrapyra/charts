@@ -1,5 +1,6 @@
 
 ( function(){
+
 	var chartConfig = {
 		id: "chart",
 		title: "Test Chart",
@@ -16,4 +17,5 @@
 		]
 	};
 	new PieChart( chartConfig );
+	
 } )();
