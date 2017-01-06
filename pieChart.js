@@ -2,7 +2,6 @@ var PieChart = function( config ){ this.init( config ); };
 PieChart.prototype = extend( Chart, {
 	constructor: PieChart,
 
-	_ready: false,
 	_offset: -Math.PI / 2, // -90deg in rad
 
 	_createPart: function( chart, partData ){

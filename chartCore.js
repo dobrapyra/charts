@@ -1,58 +1,58 @@
 /* Object.create by Douglas Crockford */
 if( typeof Object.create !== 'function' ){
-  Object.create = function( o ){
-    function F(){}
-    F.prototype = o;
-    return new F();
-  };
+	Object.create = function( o ){
+		function F(){}
+		F.prototype = o;
+		return new F();
+	};
 }
 
 /* extendObj */
 function extendObj( a, b ){
-  var k;
-  for( k in b ){
-    // if(b.hasOwnProperty(k)){
-    //   a[k] = b[k];
-    // }
-    a[k] = b[k];
-  }
-  return a;
+	var k;
+	for( k in b ){
+		// if(b.hasOwnProperty(k)){
+		//   a[k] = b[k];
+		// }
+		a[k] = b[k];
+	}
+	return a;
 }
 
 /* extend */
 function extend( P, C ){
-  return extendObj( Object.create( P.prototype ), C );
+	return extendObj( Object.create( P.prototype ), C );
 }
 
 /* requestAnimFrame */
 window.requestAnimFrame = ( function(){
-  return window.requestAnimationFrame ||
-  window.webkitRequestAnimationFrame ||
-  window.mozRequestAnimationFrame ||
-  window.oRequestAnimationFrame ||
-  window.msRequestAnimationFrame ||
-  function( cb ){
-    return window.setTimeout( cb, 1000 / 60 );
-  };
+	return window.requestAnimationFrame ||
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	window.oRequestAnimationFrame ||
+	window.msRequestAnimationFrame ||
+	function( cb ){
+		return window.setTimeout( cb, 1000 / 60 );
+	};
 } )();
 
 /* cancelRequestAnimFrame */
 window.cancelRequestAnimFrame = ( function(){
-  return window.cancelAnimationFrame ||
-  window.webkitCancelRequestAnimationFrame ||
-  window.mozCancelRequestAnimationFrame ||
-  window.oCancelRequestAnimationFrame ||
-  window.msCancelRequestAnimationFrame ||
-  clearTimeout;
+	return window.cancelAnimationFrame ||
+	window.webkitCancelRequestAnimationFrame ||
+	window.mozCancelRequestAnimationFrame ||
+	window.oCancelRequestAnimationFrame ||
+	window.msCancelRequestAnimationFrame ||
+	clearTimeout;
 } )();
 
 /* performance.now */
 window.performance = window.performance = {};
 window.performance.now = ( function(){
-  return window.performance.now ||
-  function(){
-    return new Date().getTime();
-  };
+	return window.performance.now ||
+	function(){
+		return new Date().getTime();
+	};
 } )();
 
 var ChartCore = function(){ this.init(); };
@@ -91,7 +91,7 @@ ChartCore.prototype = {
 		var $this = this;
 
 		this._raf = window.requestAnimFrame( function(){ $this._loop(); } );
-		if( !this._fr ){ return; }
+		if( !this._fr ) return;
 		this._fr = false;
 		this._t = window.performance.now;
 		this._update( this._t );
@@ -102,7 +102,7 @@ ChartCore.prototype = {
 	_startLoop: function(){
 		var $this = this;
 
-		if( this._inLoop ){ return; }
+		if( this._inLoop ) return;
 		this._inLoop = true;
 		this._raf = window.requestAnimFrame( function(){ $this._loop(); } );
 	},
