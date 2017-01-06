@@ -22,17 +22,29 @@ var PieChartPart = function( chart, data ){ this.init( chart, data ); };
 PieChartPart.prototype = extend( ChartPart, {
 	constructor: PieChartPart,
 
-	_setExtraVars: function( data ){
-		this._arc = {};
-		this._arc.b = this._offset;
-		this._arc.e = this._offset + this._relVal;
-	},
+	_setStateVars: function( data ){
+		var relVal = data.relVal || 0;
 
-	setOffset: function( offset ){
-		this._offset = offset;
-
-		this._arc.b = this._offset;
-		this._arc.e = this._offset + this._relVal;
+		this._state = {
+			b: {
+				arc: {
+					b: this._offset,
+					e: this._offset
+				}
+			},
+			e: {
+				arc: {
+					b: this._offset,
+					e: this._offset + relVal
+				}
+			},
+			c: {
+				arc: {
+					b: this._offset,
+					e: this._offset + relVal
+				}
+			}
+		};
 	},
 
 	update: function( t ){
@@ -64,9 +76,9 @@ PieChartPart.prototype = extend( ChartPart, {
 		ctx.save(); // arc
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, ao, this._arc.b, this._arc.e, false );
+		ctx.arc( this._canvas.cx, this._canvas.cy, ao, this._state.c.arc.b, this._state.c.arc.e, false );
 		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
-		ctx.arc( this._canvas.cx, this._canvas.cy, ai, this._arc.e, this._arc.b, true ); // arc pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, ai, this._state.c.arc.e, this._state.c.arc.b, true ); // arc pie
 
 		ctx.save(); // img
 
@@ -89,9 +101,9 @@ PieChartPart.prototype = extend( ChartPart, {
 		ctx.save();
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, 160, this._arc.b, this._arc.e, false );
+		ctx.arc( this._canvas.cx, this._canvas.cy, 160, this._state.c.arc.b, this._state.c.arc.e, false );
 		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
-		ctx.arc( this._canvas.cx, this._canvas.cy, 80, this._arc.e, this._arc.b, true ); // arc pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, 80, this._state.c.arc.e, this._state.c.arc.b, true ); // arc pie
 
 		this._hover = ctx.isPointInPath( pos.x, pos.y );
 

@@ -176,20 +176,33 @@ ChartPart.prototype = {
 		this._ctx = chart._ctx;
 		if( !data ) return false;
 		this._val = data.val || 0;
-		this._relVal = data.relVal || 0;
 		this._offset = data.offset || 0;
 		this._color = data.color || '#000';
 		this._imgSrc = data.img || null;
 		this._canvas = chart._canvas;
 		this._cursor = chart._cursor;
 
-		this._setExtraVars( data );
+		this._setStateVars( data );
 		this._loadImage();
 
 		return true;
 	},
 
-	_setExtraVars: function( data ){},
+	_setStateVars: function( data ){
+		var relVal = data.relVal || 0;
+
+		this._state = {
+			b: {
+				val: 0
+			},
+			e: {
+				val: relVal
+			},
+			c: {
+				val: relVal
+			}
+		};
+	},
 
 	_loadImage: function(){
 		var $this = this;
