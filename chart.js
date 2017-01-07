@@ -4,6 +4,7 @@ Chart.prototype = {
 
 	_ready: false,
 	_offset: 0,
+	_lastHover: null,
 
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
@@ -37,6 +38,8 @@ Chart.prototype = {
 		this._cursor.pos.x = 0;
 		this._cursor.pos.y = 0;
 		// this._cursor.hit = false;
+
+		this._event = config.event || {};
 
 		return true;
 	},
@@ -139,11 +142,33 @@ Chart.prototype = {
 		}
 	},
 
+	checkHoverChange: function(){
+		var $this = this;
+
+		var hover = null;
+		this._each( this._partsArr, function( key, val ){
+			if( val.checkHover() ){
+				hover = key;
+				return false;
+			}
+		} );
+
+		if( hover !== this._lastHover ){
+			if( hover !== null ){
+				this._event.hoverChange( this._data[hover] );
+			}else{
+				this._event.hoverChange( null );
+			}
+			this._lastHover = hover;
+		}
+	},
+
 	update: function( t ){
 		if( !this._ready ) return;
 		this._each( this._partsArr, function( key, val ){
 			val.update( t );
 		} );
+		this.checkHoverChange();
 	},
 
 	render: function(){
@@ -232,6 +257,14 @@ ChartPart.prototype = {
 
 	checkReady: function(){
 		return this._ready;
+	},
+
+	checkHover: function(){
+		return this._hover;
+	},
+
+	getVal: function(){
+		return this._state.c.val;
 	},
 
 	setOffset: function( offset ){

@@ -14,7 +14,16 @@
 			{ val: 70, color: '#ee62a2', label: 'val07', img: 'img/mm.jpg' },
 			{ val: 80, color: '#7cb82f', label: 'val08', img: 'img/mm.jpg' },
 			{ val: 90, color: '#86888a', label: 'val09', img: 'img/mm.jpg' }
-		]
+		],
+		event: {
+			hoverChange: function( data ){
+				if( data !== null ){
+					console.log( 'hoverChange ' + data.val );
+				}else{
+					console.log( 'hoverChange out' );
+				}
+			}
+		}
 	};
 	new PieChart( chartConfig );
 	

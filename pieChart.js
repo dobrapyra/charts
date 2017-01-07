@@ -27,18 +27,13 @@ PieChartPart.prototype = extend( ChartPart, {
 
 		this._state = {
 			b: {
-				arc: {
-					b: this._offset,
-					e: this._offset
-				}
+				val: 0,
 			},
 			e: {
-				arc: {
-					b: this._offset,
-					e: this._offset + relVal
-				}
+				val: relVal,
 			},
 			c: {
+				val: relVal,
 				arc: {
 					b: this._offset,
 					e: this._offset + relVal
