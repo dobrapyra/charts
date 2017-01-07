@@ -25,6 +25,7 @@ Chart.prototype = {
 		this._ctx = this._canvasEl.getContext( '2d' );
 
 		this._data = config.data || [];
+		this._sum = config.sum || 0;
 		this._title = config.title || '';
 
 		this._canvas = {};
@@ -50,13 +51,15 @@ Chart.prototype = {
 
 		this._min = this._data[0].val;
 		this._max = 0;
-		this._sum = 0;
+		var sum = 0;
 
 		this._each( this._data, function( key, val ){
 			if( val.val < $this._min ) $this._min = val.val;
 			if( val.val > $this._max ) $this._max = val.val;
-			$this._sum += val.val;
-		} );		
+			if( !this._sum ) sum += val.val;
+		} );
+
+		if( !this._sum ) this._sum = sum;
 
 		this._partsArr = [];
 		var partData, partOffset = this._offset;

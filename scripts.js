@@ -15,6 +15,7 @@
 			{ val: 80, color: '#7cb82f', label: 'val08', img: 'img/mm.jpg' },
 			{ val: 90, color: '#86888a', label: 'val09', img: 'img/mm.jpg' }
 		],
+		// sum: 1000,
 		size: {
 			ri: 80,
 			ro: 140,
