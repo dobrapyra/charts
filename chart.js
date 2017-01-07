@@ -3,6 +3,7 @@ Chart.prototype = {
 	constructor: Chart,
 
 	_ready: false,
+	_visible: false,
 	_offset: 0,
 	_lastHover: null,
 
@@ -41,6 +42,10 @@ Chart.prototype = {
 		// this._cursor.hit = false;
 
 		this._size = config.size || {};
+		this._time = config.time || {
+			show: 0,
+			hide: 0
+		};
 		this._event = config.event || {};
 
 		return true;
@@ -67,6 +72,7 @@ Chart.prototype = {
 			partData = val;
 			partData.relVal = $this._getRelVal( val.val, $this._sum );
 			partData.offset = partOffset;
+			partData.time = $this._getPartTime( val.val, $this._sum );
 			$this._partsArr.push( $this._createPart( $this, partData ) );
 			partOffset += partData.relVal;
 		} );
@@ -95,6 +101,13 @@ Chart.prototype = {
 
 	_getRelVal: function( val, sum ){
 		return val;
+	},
+
+	_getPartTime: function( val, sum ){
+		return {
+			show: this._time.show ? ( this._time.show * val / sum ) : 0,
+			hide: this._time.hide ? ( this._time.hide * val / sum ) : 0
+		};
 	},
 
 	_mouseenterEvent: function( e ){
@@ -155,13 +168,23 @@ Chart.prototype = {
 		} );
 
 		if( hover !== this._lastHover ){
-			if( hover !== null ){
-				this._event.hoverChange( this._data[hover] );
-			}else{
-				this._event.hoverChange( null );
+			if( this._event.hoverChange ){
+				if( hover !== null ){
+					this._event.hoverChange( this._data[hover] );
+				}else{
+					this._event.hoverChange( null );
+				}
 			}
 			this._lastHover = hover;
 		}
+	},
+
+	show: function( cb ){
+
+	},
+
+	hide: function( cb ){
+
 	},
 
 	update: function( t ){
@@ -191,6 +214,7 @@ ChartPart.prototype = {
 
 	_ready: false,
 	_imgReady: false,
+	_visible: false,
 	_hover: false,
 
 	init: function( chart, data ){
@@ -285,6 +309,6 @@ ChartPart.prototype = {
 		// draw
 	},
 
-	_checkHover: function( ctx, pos ){}
+	_checkHover: function( ctx, pos ){}	// should set this._hover
 
 };

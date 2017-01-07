@@ -22,6 +22,10 @@
 			r2i: 140,
 			r2o: 160
 		},
+		time: {
+			show: 5000,
+			hide: 2000
+		},
 		event: {
 			hoverChange: function( data ){
 				if( data !== null ){
