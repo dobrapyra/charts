@@ -18,9 +18,10 @@
 		event: {
 			hoverChange: function( data ){
 				if( data !== null ){
-					console.log( 'hoverChange ' + data.val );
+					// console.log( 'hoverChange: ' + data.val + ' - ' + data.label );
+					console.log( '%' + 'choverChange: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
 				}else{
-					console.log( 'hoverChange out' );
+					console.log( 'hoverChange: null' );
 				}
 			}
 		}
