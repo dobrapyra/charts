@@ -39,6 +39,7 @@ Chart.prototype = {
 		this._cursor.pos.y = 0;
 		// this._cursor.hit = false;
 
+		this._size = config.size || {};
 		this._event = config.event || {};
 
 		return true;
@@ -63,9 +64,6 @@ Chart.prototype = {
 			partData = val;
 			partData.relVal = $this._getRelVal( val.val, $this._sum );
 			partData.offset = partOffset;
-			partData.min = $this._min;
-			partData.max = $this._max;
-			partData.sum = $this._sum;
 			$this._partsArr.push( $this._createPart( $this, partData ) );
 			partOffset += partData.relVal;
 		} );
@@ -206,6 +204,7 @@ ChartPart.prototype = {
 		this._imgSrc = data.img || null;
 		this._canvas = chart._canvas;
 		this._cursor = chart._cursor;
+		this._size = chart._size;
 
 		this._setStateVars( data );
 		this._loadImage();

@@ -15,6 +15,12 @@
 			{ val: 80, color: '#7cb82f', label: 'val08', img: 'img/mm.jpg' },
 			{ val: 90, color: '#86888a', label: 'val09', img: 'img/mm.jpg' }
 		],
+		size: {
+			ri: 80,
+			ro: 140,
+			r2i: 140,
+			r2o: 160
+		},
 		event: {
 			hoverChange: function( data ){
 				if( data !== null ){

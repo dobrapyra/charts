@@ -51,8 +51,15 @@ PieChartPart.prototype = extend( ChartPart, {
 	render: function(){
 		if( !this._ready ) return;
 
-		this._drawArc( this._ctx, 80, 140, this._img );
+		this._drawArc0();
+		this._drawArc1();
+	},
 
+	_drawArc0: function(){
+		this._drawArc( this._ctx, this._size.ri, this._size.ro, this._img );
+	},
+
+	_drawArc1: function(){
 		this._ctx.save(); // alpha
 
 		if( this._hover ){
@@ -61,19 +68,22 @@ PieChartPart.prototype = extend( ChartPart, {
 			this._ctx.globalAlpha = 0.5;
 		}
 		// this._ctx.globalAlpha = 0.5;
-		this._drawArc( this._ctx, 140, 160, null );
+		this._drawArc( this._ctx, this._size.r2i, this._size.r2o, null );
 
 		this._ctx.restore(); // alpha
 	},
 
-	_drawArc: function( ctx, ai, ao, img ){
+	_drawArc: function( ctx, ri, ro, img ){
 
 		ctx.save(); // arc
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, ao, this._state.c.arc.b, this._state.c.arc.e, false );
-		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
-		ctx.arc( this._canvas.cx, this._canvas.cy, ai, this._state.c.arc.e, this._state.c.arc.b, true ); // arc pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, ro, this._state.c.arc.b, this._state.c.arc.e, false );
+		if( ri > 0 ){ // arc pie
+			ctx.arc( this._canvas.cx, this._canvas.cy, ri, this._state.c.arc.e, this._state.c.arc.b, true );
+		}else{ // full pie
+			ctx.lineTo( this._canvas.cx, this._canvas.cy );
+		}
 
 		ctx.save(); // img
 
@@ -96,9 +106,12 @@ PieChartPart.prototype = extend( ChartPart, {
 		ctx.save();
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, 160, this._state.c.arc.b, this._state.c.arc.e, false );
-		// ctx.lineTo( this._canvas.cx, this._canvas.cy ); // full pie
-		ctx.arc( this._canvas.cx, this._canvas.cy, 80, this._state.c.arc.e, this._state.c.arc.b, true ); // arc pie
+		ctx.arc( this._canvas.cx, this._canvas.cy, this._size.r2o, this._state.c.arc.b, this._state.c.arc.e, false );
+		if( this._size.ri > 0 ){ // arc pie
+			ctx.arc( this._canvas.cx, this._canvas.cy, this._size.ri, this._state.c.arc.e, this._state.c.arc.b, true );
+		}else{ // full pie
+			ctx.lineTo( this._canvas.cx, this._canvas.cy );
+		}
 
 		this._hover = ctx.isPointInPath( pos.x, pos.y );
 
