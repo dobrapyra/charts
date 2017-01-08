@@ -249,7 +249,7 @@ Chart.prototype = {
 			}
 
 			if( t >= this._animArr[k].b ){ // anim
-				// console.log( this._animArr[k].name );
+				this._setAnimState( this._animArr[k].name, ( ( t - this._animArr[k].b ) / this._animArr[k].time ) );
 			}
 
 		}
@@ -257,6 +257,10 @@ Chart.prototype = {
 		for( k in remArr ){
 			this._animArr.splice( this._animArr.indexOf( remArr[k] ), 1 );
 		}
+	},
+
+	_setAnimState: function( name, fract ){
+		// console.log( name, fract );
 	},
 
 	update: function( t ){
@@ -390,6 +394,8 @@ ChartPart.prototype = {
 			}
 		}
 
+		this._setAnimState( name, 0 );
+
 		if( ak === null ){
 			this._animArr.push(anim);
 		}else{
@@ -404,6 +410,7 @@ ChartPart.prototype = {
 		for( k in this._animArr ){
 
 			if( t >= this._animArr[k].e ){ // anim end
+				this._setAnimState( this._animArr[k].name, 1 );
 				remArr.push( this._animArr[k] );
 				if( typeof( this._animArr[k].cb ) == 'function' ){
 					this._animArr[k].cb();
@@ -412,7 +419,7 @@ ChartPart.prototype = {
 			}
 
 			if( t >= this._animArr[k].b ){ // anim
-				// console.log( this._animArr[k].name + ' - ' + this._label );
+				this._setAnimState( this._animArr[k].name, ( ( t - this._animArr[k].b ) / this._animArr[k].time ) );
 			}
 
 		}
@@ -420,6 +427,10 @@ ChartPart.prototype = {
 		for( k in remArr ){
 			this._animArr.splice( this._animArr.indexOf( remArr[k] ), 1 );
 		}
+	},
+
+	_setAnimState: function( name, fract ){
+		// console.log( name, fract );
 	},
 
 	update: function( t ){

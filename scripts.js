@@ -23,8 +23,8 @@
 			r2o: 160
 		},
 		time: {
-			show: 3000,
-			hide: 1000
+			show: 1000,
+			hide: 500
 		},
 		event: {
 			hoverChange: function( data ){
