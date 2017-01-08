@@ -32,24 +32,20 @@ PieChartPart.prototype = extend( ChartPart, {
 				e: this._offset + relVal
 			}
 		};
-	},
 
-	_setAnimState: function( name, fract ){
-		switch( name ){
-
-			default: break;
-
-			case 'show':
-				this._state.arc.b = this._offset;
-				this._state.arc.e = this._offset + ( this._state.val * fract );
-			break;
-
-			case 'hide':
-				this._state.arc.b = this._offset + ( this._state.val * fract );
-				this._state.arc.e = this._offset + this._state.val;
-			break;
-
-		}
+		this._animStateFns.show = function( $this, fract ){
+			$this._state.arc = {
+				b: $this._offset,
+				e: $this._offset + ( $this._state.val * fract )
+			};
+		};
+		
+		this._animStateFns.hide = function( $this, fract ){
+			$this._state.arc = {
+				b: $this._offset + ( $this._state.val * fract ),
+				e: $this._offset + $this._state.val
+			};
+		};
 	},
 
 	update: function( t ){

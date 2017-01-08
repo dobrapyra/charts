@@ -6,6 +6,7 @@ Chart.prototype = {
 	_visible: false,
 	_offset: 0,
 	_lastHover: null,
+	_animStateFns: {},
 
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
@@ -260,7 +261,8 @@ Chart.prototype = {
 	},
 
 	_setAnimState: function( name, fract ){
-		// console.log( name, fract );
+		if( !this._animStateFns[name] ) return;
+		this._animStateFns[name]( this, fract );
 	},
 
 	update: function( t ){
@@ -298,6 +300,7 @@ ChartPart.prototype = {
 	_imgReady: false,
 	_visible: false,
 	_hover: false,
+	_animStateFns: {},
 
 	init: function( chart, data ){
 		if( !this._setVars( chart, data) ) return;
@@ -430,7 +433,8 @@ ChartPart.prototype = {
 	},
 
 	_setAnimState: function( name, fract ){
-		// console.log( name, fract );
+		if( !this._animStateFns[name] ) return;
+		this._animStateFns[name]( this, fract );
 	},
 
 	update: function( t ){
