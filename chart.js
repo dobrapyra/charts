@@ -6,7 +6,6 @@ Chart.prototype = {
 	_visible: false,
 	_offset: 0,
 	_lastHover: null,
-	_animArr: [],
 
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
@@ -48,6 +47,7 @@ Chart.prototype = {
 			hide: 0
 		};
 		this._event = config.event || {};
+		this._animArr = [];
 
 		return true;
 	},
@@ -73,7 +73,6 @@ Chart.prototype = {
 			partData = val;
 			partData.relVal = $this._getRelVal( val.val, $this._sum );
 			partData.offset = partOffset;
-			partData.time = $this._getPartTime( val.val, $this._sum );
 			$this._partsArr.push( $this._createPart( $this, partData ) );
 			partOffset += partData.relVal;
 		} );
@@ -102,13 +101,6 @@ Chart.prototype = {
 
 	_getRelVal: function( val, sum ){
 		return val;
-	},
-
-	_getPartTime: function( val, sum ){
-		return {
-			show: this._time.show ? ( this._time.show * val / sum ) : 0,
-			hide: this._time.hide ? ( this._time.hide * val / sum ) : 0
-		};
 	},
 
 	_mouseenterEvent: function( e ){
@@ -180,12 +172,22 @@ Chart.prototype = {
 		}
 	},
 
-	anim: function( name, cb ){
+	show: function( cb, partCb ){
+		this.anim( 'show', cb, partCb );
+	},
+
+	hide: function( cb, partCb ){
+		this.anim( 'hide', cb, partCb );
+	},
+
+	anim: function( name, cb, partCb ){
 		var anim = {
 			name: name,
 			b: null,
 			e: null,
-			cb: cb
+			time: null,
+			cb: ( cb || null ),
+			partCb: ( partCb || null )
 		};
 		
 		var k, ak = null;
@@ -203,35 +205,51 @@ Chart.prototype = {
 		}
 	},
 
-	show: function( cb ){
-		this.anim( 'show', cb );
+	_partAnim: function( anim ){
+		var $this = this;
+
+		var offset = 0, partTime;
+		this._each( this._partsArr, function( key, val ){
+			partTime = $this._getPartTime( val.getVal(), $this._sum, anim, offset, 0 );
+			val.anim( anim.name, partTime, anim.partCb );
+			offset += partTime.time;
+		} );
 	},
 
-	hide: function( cb ){
-		this.anim( 'hide', cb );
+	_getPartTime: function( val, sum, anim, offset, over ){
+		var partTime = anim.time * val / sum;
+
+		return {
+			b: anim.b + offset,
+			e: anim.b + offset + partTime,
+			time: partTime
+		};
 	},
 
 	_updateAnim: function( t ){
+		if( !this._ready ) return;
+		
 		var k, remArr = [];
 		for( k in this._animArr ){
 
 			if( this._animArr[k].b === null || this._animArr[k].e === null ){
-
+				var animTime = this._time[this._animArr[k].name] || 0;
 				this._animArr[k].b = t;
-				this._animArr[k].e = t + ( this._time[this._animArr[k].name] || 0 );
-
+				this._animArr[k].e = t + animTime;
+				this._animArr[k].time = animTime;
+				this._partAnim( this._animArr[k] );
 			}
 
 			if( t >= this._animArr[k].e ){ // anim end
+				remArr.push( this._animArr[k] );
 				if( typeof( this._animArr[k].cb ) == 'function' ){
 					this._animArr[k].cb();
-					remArr.push( this._animArr[k] );
 				}
 				continue;
 			}
 
 			if( t >= this._animArr[k].b ){ // anim
-				console.log( this._animArr[k].name );
+				// console.log( this._animArr[k].name );
 			}
 
 		}
@@ -247,6 +265,7 @@ Chart.prototype = {
 		this._updateAnim( t );
 
 		this._each( this._partsArr, function( key, val ){
+			val.updateAnim( t );
 			val.update( t );
 		} );
 
@@ -285,13 +304,14 @@ ChartPart.prototype = {
 		this._ctx = chart._ctx;
 		if( !data ) return false;
 		this._val = data.val || 0;
+		this._label = data.label || '';
 		this._offset = data.offset || 0;
 		this._color = data.color || '#000';
 		this._imgSrc = data.img || null;
 		this._canvas = chart._canvas;
 		this._cursor = chart._cursor;
 		this._size = chart._size;
-		this._time = data.time;
+		this._animArr = [];
 
 		this._setStateVars( data );
 		this._loadImage();
@@ -342,21 +362,69 @@ ChartPart.prototype = {
 	},
 
 	getVal: function(){
-		return this._state.c.val;
+		return this._val;
+	},
+
+	getState: function(){
+		return this._state.c;
 	},
 
 	setOffset: function( offset ){
 		this._offset = offset;
 	},
 
-	_updateAnim: function( t ){
+	anim: function( name, time, cb ){
+		var anim = {
+			name: name,
+			b: time.b,
+			e: time.e,
+			time: time.time,
+			cb: cb
+		};
+		
+		var k, ak = null;
+		for( k in this._animArr ){
+			if( this._animArr[k].name == name ){
+				ak = k;
+				break;
+			}
+		}
 
+		if( ak === null ){
+			this._animArr.push(anim);
+		}else{
+			this._animArr[ak] = anim;
+		}
+	},
+
+	updateAnim: function( t ){
+		if( !this._ready ) return;
+
+		var k, remArr = [];
+		for( k in this._animArr ){
+
+			if( t >= this._animArr[k].e ){ // anim end
+				remArr.push( this._animArr[k] );
+				if( typeof( this._animArr[k].cb ) == 'function' ){
+					this._animArr[k].cb();
+				}
+				continue;
+			}
+
+			if( t >= this._animArr[k].b ){ // anim
+				// console.log( this._animArr[k].name + ' - ' + this._label );
+			}
+
+		}
+
+		for( k in remArr ){
+			this._animArr.splice( this._animArr.indexOf( remArr[k] ), 1 );
+		}
 	},
 
 	update: function( t ){
 		if( !this._ready ) return;
 
-		this._updateAnim( t );
 		this._checkHover( this._ctx, this._cursor.pos );
 	},
 
