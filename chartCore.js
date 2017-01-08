@@ -8,20 +8,24 @@ if( typeof Object.create !== 'function' ){
 }
 
 /* extendObj */
-function extendObj( a, b ){
+function extendObj( a, b, op ){ // op - only own property
+	op = op || false;
 	var k;
 	for( k in b ){
-		// if(b.hasOwnProperty(k)){
-		//   a[k] = b[k];
-		// }
-		a[k] = b[k];
+		if( !op ){
+			a[k] = b[k];
+		}else{
+			if( b.hasOwnProperty(k) ){
+				a[k] = b[k];
+			}
+		}
 	}
 	return a;
 }
 
 /* extend */
 function extend( P, C ){
-	return extendObj( Object.create( P.prototype ), C );
+	return extendObj( Object.create( P.prototype ), C, false );
 }
 
 /* requestAnimFrame */
@@ -93,7 +97,7 @@ ChartCore.prototype = {
 		this._raf = window.requestAnimFrame( function(){ $this._loop(); } );
 		if( !this._fr ) return;
 		this._fr = false;
-		this._t = window.performance.now;
+		this._t = window.performance.now();
 		this._update( this._t );
 		this._render();
 		this._fr = true;

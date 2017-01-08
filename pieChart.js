@@ -26,18 +26,10 @@ PieChartPart.prototype = extend( ChartPart, {
 		var relVal = data.relVal || 0;
 
 		this._state = {
-			b: {
-				val: 0,
-			},
-			e: {
-				val: relVal,
-			},
-			c: {
-				val: relVal,
-				arc: {
-					b: this._offset,
-					e: this._offset + relVal
-				}
+			val: relVal,
+			arc: {
+				b: this._offset,
+				e: this._offset + relVal
 			}
 		};
 	},
@@ -78,9 +70,9 @@ PieChartPart.prototype = extend( ChartPart, {
 		ctx.save(); // arc
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, ro, this._state.c.arc.b, this._state.c.arc.e, false );
+		ctx.arc( this._canvas.cx, this._canvas.cy, ro, this._state.arc.b, this._state.arc.e, false );
 		if( ri > 0 ){ // arc pie
-			ctx.arc( this._canvas.cx, this._canvas.cy, ri, this._state.c.arc.e, this._state.c.arc.b, true );
+			ctx.arc( this._canvas.cx, this._canvas.cy, ri, this._state.arc.e, this._state.arc.b, true );
 		}else{ // full pie
 			ctx.lineTo( this._canvas.cx, this._canvas.cy );
 		}
@@ -106,9 +98,9 @@ PieChartPart.prototype = extend( ChartPart, {
 		ctx.save();
 
 		ctx.beginPath();
-		ctx.arc( this._canvas.cx, this._canvas.cy, this._size.r2o, this._state.c.arc.b, this._state.c.arc.e, false );
+		ctx.arc( this._canvas.cx, this._canvas.cy, this._size.r2o, this._state.arc.b, this._state.arc.e, false );
 		if( this._size.ri > 0 ){ // arc pie
-			ctx.arc( this._canvas.cx, this._canvas.cy, this._size.ri, this._state.c.arc.e, this._state.c.arc.b, true );
+			ctx.arc( this._canvas.cx, this._canvas.cy, this._size.ri, this._state.arc.e, this._state.arc.b, true );
 		}else{ // full pie
 			ctx.lineTo( this._canvas.cx, this._canvas.cy );
 		}

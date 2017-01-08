@@ -6,6 +6,7 @@ Chart.prototype = {
 	_visible: false,
 	_offset: 0,
 	_lastHover: null,
+	_animArr: [],
 
 	init: function( config ){
 		if( !this._setVars( config ) ) return;
@@ -179,24 +180,82 @@ Chart.prototype = {
 		}
 	},
 
-	show: function( cb ){
+	anim: function( name, cb ){
+		var anim = {
+			name: name,
+			b: null,
+			e: null,
+			cb: cb
+		};
+		
+		var k, ak = null;
+		for( k in this._animArr ){
+			if( this._animArr[k].name == name ){
+				ak = k;
+				break;
+			}
+		}
 
+		if( ak === null ){
+			this._animArr.push(anim);
+		}else{
+			this._animArr[ak] = anim;
+		}
+	},
+
+	show: function( cb ){
+		this.anim( 'show', cb );
 	},
 
 	hide: function( cb ){
+		this.anim( 'hide', cb );
+	},
 
+	_updateAnim: function( t ){
+		var k, remArr = [];
+		for( k in this._animArr ){
+
+			if( this._animArr[k].b === null || this._animArr[k].e === null ){
+
+				this._animArr[k].b = t;
+				this._animArr[k].e = t + ( this._time[this._animArr[k].name] || 0 );
+
+			}
+
+			if( t >= this._animArr[k].e ){ // anim end
+				if( typeof( this._animArr[k].cb ) == 'function' ){
+					this._animArr[k].cb();
+					remArr.push( this._animArr[k] );
+				}
+				continue;
+			}
+
+			if( t >= this._animArr[k].b ){ // anim
+				console.log( this._animArr[k].name );
+			}
+
+		}
+
+		for( k in remArr ){
+			this._animArr.splice( this._animArr.indexOf( remArr[k] ), 1 );
+		}
 	},
 
 	update: function( t ){
 		if( !this._ready ) return;
+
+		this._updateAnim( t );
+
 		this._each( this._partsArr, function( key, val ){
 			val.update( t );
 		} );
+
 		this.checkHoverChange();
 	},
 
 	render: function(){
 		if( !this._ready ) return;
+
 		this._each( this._partsArr, function( key, val ){
 			val.render();
 		} );
@@ -232,6 +291,7 @@ ChartPart.prototype = {
 		this._canvas = chart._canvas;
 		this._cursor = chart._cursor;
 		this._size = chart._size;
+		this._time = data.time;
 
 		this._setStateVars( data );
 		this._loadImage();
@@ -243,15 +303,7 @@ ChartPart.prototype = {
 		var relVal = data.relVal || 0;
 
 		this._state = {
-			b: {
-				val: 0
-			},
-			e: {
-				val: relVal
-			},
-			c: {
-				val: relVal
-			}
+			val: relVal
 		};
 	},
 
@@ -297,9 +349,14 @@ ChartPart.prototype = {
 		this._offset = offset;
 	},
 
+	_updateAnim: function( t ){
+
+	},
+
 	update: function( t ){
 		if( !this._ready ) return;
 
+		this._updateAnim( t );
 		this._checkHover( this._ctx, this._cursor.pos );
 	},
 
