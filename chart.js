@@ -40,7 +40,7 @@ Chart.prototype = {
 		this._cursor.pos = {};
 		this._cursor.pos.x = 0;
 		this._cursor.pos.y = 0;
-		// this._cursor.hit = false;
+		this._cursor.click = false;
 
 		this._size = config.size || {};
 		this._time = config.time || {
@@ -95,6 +95,11 @@ Chart.prototype = {
 		this._canvasEl.addEventListener('mouseleave', function(e){
 			$this._mouseleaveEvent( e );
 		} );
+
+		this._canvasEl.addEventListener('click', function(e){
+			$this._clickEvent( e );
+		} );
+
 	},
 
 	_createPart: function( chart, partData ){
@@ -115,6 +120,11 @@ Chart.prototype = {
 
 	_mouseleaveEvent: function( e ){
 		this._cursor.pos = this._recalcCursorPos( e );
+	},
+
+	_clickEvent: function( e ){
+		this._cursor.pos = this._recalcCursorPos( e );
+		this._cursor.click = true;
 	},
 
 	_recalcCursorPos: function( e ){	
@@ -151,7 +161,7 @@ Chart.prototype = {
 		}
 	},
 
-	checkHoverChange: function(){
+	_checkCursor: function(){
 		var $this = this;
 
 		var hover = null;
@@ -171,6 +181,15 @@ Chart.prototype = {
 				}
 			}
 			this._lastHover = hover;
+		}
+
+		if( this._cursor.click ){
+			if( this._event.click ){
+				if( hover !== null ){
+					this._event.click( this._data[hover] );
+				}
+			}
+			this._cursor.click = false;
 		}
 	},
 
@@ -281,7 +300,7 @@ Chart.prototype = {
 			val.update( t );
 		} );
 
-		this.checkHoverChange();
+		this._checkCursor();
 	},
 
 	render: function(){

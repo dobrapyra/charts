@@ -30,10 +30,14 @@
 			hoverChange: function( data ){
 				if( data !== null ){
 					// console.log( 'hoverChange: ' + data.val + ' - ' + data.label );
-					console.log( '%' + 'choverChange: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
+					console.log( '%c' + 'hoverChange: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
 				}else{
 					console.log( 'hoverChange: null' );
 				}
+			},
+			click: function( data ){
+				// console.log( 'click: ' + data.val + ' - ' + data.label );
+				console.log( '%c' + 'click: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
 			}
 		}
 	};
