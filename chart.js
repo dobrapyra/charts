@@ -74,6 +74,7 @@ Chart.prototype = {
 			partData = val;
 			partData.relVal = $this._getRelVal( val.val, $this._sum );
 			partData.offset = partOffset;
+			partData.rootOffset = $this._offset;
 			$this._partsArr.push( $this._createPart( $this, partData ) );
 			partOffset += partData.relVal;
 		} );
@@ -173,21 +174,22 @@ Chart.prototype = {
 		}
 	},
 
-	show: function( cb, partCb ){
-		this.anim( 'show', cb, partCb );
+	show: function( cb, perPart, partCb ){
+		this.anim( 'show', cb, perPart, partCb );
 	},
 
-	hide: function( cb, partCb ){
-		this.anim( 'hide', cb, partCb );
+	hide: function( cb, perPart, partCb ){
+		this.anim( 'hide', cb, perPart, partCb );
 	},
 
-	anim: function( name, cb, partCb ){
+	anim: function( name, cb, perPart, partCb ){
 		var anim = {
 			name: name,
 			b: null,
 			e: null,
 			time: null,
 			cb: ( cb || null ),
+			perPart: ( perPart || false ),
 			partCb: ( partCb || null )
 		};
 		
@@ -211,7 +213,11 @@ Chart.prototype = {
 
 		var offset = 0, partTime;
 		this._each( this._partsArr, function( key, val ){
-			partTime = $this._getPartTime( val.getVal(), $this._sum, anim, offset, 0 );
+			if( anim.perPart ){
+				partTime = $this._getPartTime( val.getVal(), $this._sum, anim, offset, 0 );
+			}else{
+				partTime = $this._getPartTime( 1, 1, anim, 0, 0 );
+			}
 			val.anim( anim.name, partTime, anim.partCb );
 			offset += partTime.time;
 		} );
@@ -233,7 +239,7 @@ Chart.prototype = {
 		var k, remArr = [];
 		for( k in this._animArr ){
 
-			if( this._animArr[k].b === null || this._animArr[k].e === null ){
+			if( this._animArr[k].b === null || this._animArr[k].e === null ){ // anim init - set time
 				var animTime = this._time[this._animArr[k].name] || 0;
 				this._animArr[k].b = t;
 				this._animArr[k].e = t + animTime;

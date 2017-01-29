@@ -8,6 +8,30 @@ ChartPart.prototype = {
 	_hover: false,
 	_animStateFns: {},
 
+	_easingFns: {
+		easeInQuad: function(f){
+			return f*f;
+		},
+		easeOutQuad: function(f){
+			f = 1 - f;
+			return 1 - (f*f);
+		},
+		easeInCubic: function(f){
+			return f*f*f;
+		},
+		easeOutCubic: function(f){
+			f = 1 - f;
+			return 1 - (f*f*f*f);
+		},
+		easeInQuart: function(f){
+			return f*f*f;
+		},
+		easeOutQuart: function(f){
+			f = 1 - f;
+			return 1 - (f*f*f*f);
+		}
+	},
+
 	init: function( chart, data ){
 		if( !this._setVars( chart, data) ) return;
 	},
@@ -19,6 +43,8 @@ ChartPart.prototype = {
 		this._val = data.val || 0;
 		this._label = data.label || '';
 		this._offset = data.offset || 0;
+		this._rootOffset = data.rootOffset || 0;
+		this._relOffset = this._offset - this._rootOffset;
 		this._color = data.color || '#000';
 		this._imgSrc = data.img || null;
 		this._canvas = chart._canvas;
@@ -82,10 +108,6 @@ ChartPart.prototype = {
 		return this._state.c;
 	},
 
-	setOffset: function( offset ){
-		this._offset = offset;
-	},
-
 	anim: function( name, time, cb ){
 		var anim = {
 			name: name,
@@ -140,6 +162,7 @@ ChartPart.prototype = {
 
 	_setAnimState: function( name, fract ){
 		if( !this._animStateFns[name] ) return;
+		fract = this._easingFns.easeOutQuad( fract );
 		this._animStateFns[name]( this, fract );
 	},
 

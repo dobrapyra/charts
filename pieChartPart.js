@@ -14,16 +14,27 @@ PieChartPart.prototype = extend( ChartPart, {
 		};
 
 		this._animStateFns.show = function( $this, fract ){
+			// $this._state.arc = {
+			// 	b: $this._offset,
+			// 	e: $this._offset + ( $this._state.val * fract )
+			// };
+			var offset = ( $this._relOffset * fract ) + $this._rootOffset;
 			$this._state.arc = {
-				b: $this._offset,
-				e: $this._offset + ( $this._state.val * fract )
+				b: offset,
+				e: offset + ( $this._state.val * fract )
 			};
 		};
 		
 		this._animStateFns.hide = function( $this, fract ){
+			// $this._state.arc = {
+			// 	b: $this._offset + ( $this._state.val * fract ),
+			// 	e: $this._offset + $this._state.val
+			// };
+			var offset = $this._relOffset + ( ( 2 * Math.PI - $this._relOffset ) * fract ) + $this._rootOffset; 
+			// var offset = ( ( 2 * Math.PI - $this._relOffset ) * fract )  + ( 2 * Math.PI - $this._relOffset ) + $this._rootOffset; 
 			$this._state.arc = {
-				b: $this._offset + ( $this._state.val * fract ),
-				e: $this._offset + $this._state.val
+				b: offset,
+				e: offset + ( $this._state.val * (1 -fract ) )
 			};
 		};
 	},
@@ -53,7 +64,6 @@ PieChartPart.prototype = extend( ChartPart, {
 		}else{
 			this._ctx.globalAlpha = 0.5;
 		}
-		// this._ctx.globalAlpha = 0.5;
 		this._drawArc( this._ctx, this._size.r2i, this._size.r2o, null );
 
 		this._ctx.restore(); // alpha
