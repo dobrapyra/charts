@@ -31,7 +31,6 @@ PieChartPart.prototype = extend( ChartPart, {
 			// 	e: $this._offset + $this._state.val
 			// };
 			var offset = $this._relOffset + ( ( 2 * Math.PI - $this._relOffset ) * fract ) + $this._rootOffset; 
-			// var offset = ( ( 2 * Math.PI - $this._relOffset ) * fract )  + ( 2 * Math.PI - $this._relOffset ) + $this._rootOffset; 
 			$this._state.arc = {
 				b: offset,
 				e: offset + ( $this._state.val * (1 -fract ) )
