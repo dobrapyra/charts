@@ -133,6 +133,21 @@ ChartPart.prototype = {
 			this._animArr[ak] = anim;
 		}
 	},
+	
+	stopAnim: function( name ){
+
+		var k, ak = null;
+		for( k in this._animArr ){
+			if( this._animArr[k].name == name ){
+				ak = k;
+				break;
+			}
+		}
+
+		if( ak !== null ){
+			this._animArr.splice(ak, 1);
+		}
+	},
 
 	updateAnim: function( t ){
 		if( !this._ready ) return;

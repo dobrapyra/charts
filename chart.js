@@ -194,10 +194,12 @@ Chart.prototype = {
 	},
 
 	show: function( cb, perPart, partCb ){
+		this.stopAnim( 'hide' );
 		this.anim( 'show', cb, perPart, partCb );
 	},
 
 	hide: function( cb, perPart, partCb ){
+		this.stopAnim( 'show' );
 		this.anim( 'hide', cb, perPart, partCb );
 	},
 
@@ -227,6 +229,26 @@ Chart.prototype = {
 		}
 	},
 
+	stopAnim: function( name, doCb ){
+
+		var k, ak = null;
+		for( k in this._animArr ){
+			if( this._animArr[k].name == name ){
+				ak = k;
+				break;
+			}
+		}
+
+		if( ak !== null ){
+			if( doCb && typeof( this._animArr[ak].cb ) == 'function' ){
+				this._animArr[ak].cb();
+			}
+			this._animArr.splice(ak, 1);
+		}
+
+		this._stopPartAnim( name );
+	},
+
 	_partAnim: function( anim ){
 		var $this = this;
 
@@ -239,6 +261,14 @@ Chart.prototype = {
 			}
 			val.anim( anim.name, partTime, anim.partCb );
 			offset += partTime.time;
+		} );
+	},
+
+	_stopPartAnim: function( name ){
+		var $this = this;
+
+		this._each( this._partsArr, function( key, val ){
+			val.stopAnim( name );
 		} );
 	},
 
