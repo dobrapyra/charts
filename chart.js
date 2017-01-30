@@ -179,8 +179,10 @@ Chart.prototype = {
 			if( this._event.hoverChange ){
 				if( hover !== null ){
 					this._event.hoverChange( this._data[hover] );
+					this._setCursor('pointer');
 				}else{
 					this._event.hoverChange( null );
+					this._setCursor('');
 				}
 			}
 			this._lastHover = hover;
@@ -194,6 +196,11 @@ Chart.prototype = {
 			}
 			this._cursor.click = false;
 		}
+	},
+
+	_setCursor: function( state ){
+		state = state || '';
+		this._canvasEl.style.cursor = state;
 	},
 
 	show: function( cb, perPart, partCb ){
