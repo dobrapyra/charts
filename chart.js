@@ -27,8 +27,9 @@ Chart.prototype = {
 		this._ctx = this._canvasEl.getContext( '2d' );
 
 		this._data = config.data || [];
-		this._sum = config.sum || 0;
 		this._title = config.title || '';
+		this._total = config.total || 0;
+		this._offset = config.offset || this._offset;
 
 		this._canvas = {};
 		this._canvas.w = this._canvasEl.getAttribute( 'width' ) || 320;
@@ -60,21 +61,21 @@ Chart.prototype = {
 
 		this._min = this._data[0].val;
 		this._max = 0;
-		var sum = 0;
+		var total = 0;
 
 		this._each( this._data, function( key, val ){
 			if( val.val < $this._min ) $this._min = val.val;
 			if( val.val > $this._max ) $this._max = val.val;
-			if( !this._sum ) sum += val.val;
+			if( !this._total ) total += val.val;
 		} );
 
-		if( !this._sum ) this._sum = sum;
+		if( !this._total ) this._total = total;
 
 		this._partsArr = [];
 		var partData, partOffset = this._offset;
 		this._each( this._data, function( key, val ){
 			partData = val;
-			partData.relVal = $this._getRelVal( val.val, $this._sum );
+			partData.relVal = $this._getRelVal( val.val, $this._total );
 			partData.offset = partOffset;
 			partData.rootOffset = $this._offset;
 			$this._partsArr.push( $this._createPart( $this, partData ) );
@@ -257,7 +258,7 @@ Chart.prototype = {
 		var offset = 0, partTime;
 		this._each( this._partsArr, function( key, val ){
 			if( anim.perPart ){
-				partTime = $this._getPartTime( val.getVal(), $this._sum, anim, offset, 0 );
+				partTime = $this._getPartTime( val.getVal(), $this._total, anim, offset, 0 );
 			}else{
 				partTime = $this._getPartTime( 1, 1, anim, 0, 0 );
 			}
