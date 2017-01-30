@@ -45,7 +45,9 @@ Chart.prototype = {
 		this._size = config.size || {};
 		this._time = config.time || {
 			show: 0,
-			hide: 0
+			hide: 0,
+			mouseenter: 0,
+			mouseleave: 0
 		};
 		this._event = config.event || {};
 		this._animArr = [];
@@ -289,7 +291,7 @@ Chart.prototype = {
 		for( k in this._animArr ){
 
 			if( this._animArr[k].b === null || this._animArr[k].e === null ){ // anim init - set time
-				var animTime = this._time[this._animArr[k].name] || 0;
+				var animTime = this.getTime( this._animArr[k].name );
 				this._animArr[k].b = t;
 				this._animArr[k].e = t + animTime;
 				this._animArr[k].time = animTime;
@@ -318,6 +320,10 @@ Chart.prototype = {
 	_setAnimState: function( name, fract ){
 		if( !this._animStateFns[name] ) return;
 		this._animStateFns[name]( this, fract );
+	},
+
+	getTime: function( animName ){
+		return this._time[animName] || 0;
 	},
 
 	update: function( t ){

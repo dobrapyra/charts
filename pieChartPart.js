@@ -10,7 +10,8 @@ PieChartPart.prototype = extend( ChartPart, {
 			arc: {
 				b: this._offset,
 				e: this._offset + relVal
-			}
+			},
+			arc1alpha: 0.5,
 		};
 
 		this._animStateFns.show = function( $this, fract ){
@@ -36,6 +37,15 @@ PieChartPart.prototype = extend( ChartPart, {
 				e: offset + ( $this._state.val * (1 -fract ) )
 			};
 		};
+		
+		this._animStateFns.mouseenter = function( $this, fract ){
+			$this._state.arc1alpha = 0.5 * fract + 0.5;
+		};
+		
+		this._animStateFns.mouseleave = function( $this, fract ){
+			$this._state.arc1alpha = 0.5 * ( 1 - fract ) + 0.5;
+		};
+
 	},
 
 	update: function( t ){
@@ -58,11 +68,7 @@ PieChartPart.prototype = extend( ChartPart, {
 	_drawArc1: function(){
 		this._ctx.save(); // alpha
 
-		if( this._hover ){
-			this._ctx.globalAlpha = 1;
-		}else{
-			this._ctx.globalAlpha = 0.5;
-		}
+		this._ctx.globalAlpha = this._state.arc1alpha;
 		this._drawArc( this._ctx, this._size.r2i, this._size.r2o, null );
 
 		this._ctx.restore(); // alpha
@@ -107,8 +113,18 @@ PieChartPart.prototype = extend( ChartPart, {
 		}else{ // full pie
 			ctx.lineTo( this._canvas.cx, this._canvas.cy );
 		}
-
+		var prevHover = this._hover;
 		this._hover = ctx.isPointInPath( pos.x, pos.y );
+
+		if( prevHover != this._hover ){
+			if( this._hover ){
+				this.stopAnim( 'mouseleave' );
+				this.anim( 'mouseenter', {} );
+			}else{
+				this.stopAnim( 'mouseenter' );
+				this.anim( 'mouseleave', {} );
+			}
+		}
 
 		ctx.restore();
 

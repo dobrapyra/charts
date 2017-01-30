@@ -24,7 +24,9 @@
 		},
 		time: {
 			show: 1000,
-			hide: 500
+			hide: 500,
+			mouseenter: 300,
+			mouseleave: 200
 		},
 		event: {
 			hoverChange: function( data ){

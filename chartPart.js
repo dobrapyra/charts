@@ -111,9 +111,9 @@ ChartPart.prototype = {
 	anim: function( name, time, cb ){
 		var anim = {
 			name: name,
-			b: time.b,
-			e: time.e,
-			time: time.time,
+			b: time.b || null,
+			e: time.e || null,
+			time: time.time || null,
 			cb: cb
 		};
 		
@@ -154,6 +154,13 @@ ChartPart.prototype = {
 
 		var k, remArr = [];
 		for( k in this._animArr ){
+
+			if( this._animArr[k].b === null || this._animArr[k].e === null ){ // anim init - set time
+				var animTime = this._chart.getTime( this._animArr[k].name );
+				this._animArr[k].b = t;
+				this._animArr[k].e = t + animTime;
+				this._animArr[k].time = animTime;
+			}
 
 			if( t >= this._animArr[k].e ){ // anim end
 				this._setAnimState( this._animArr[k].name, 1 );
