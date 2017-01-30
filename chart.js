@@ -176,24 +176,32 @@ Chart.prototype = {
 		} );
 
 		if( hover !== this._lastHover ){
+
+			if( hover !== null ){
+				this._setCursor('pointer');
+			}else{
+				this._setCursor('');
+			}
+
 			if( this._event.hoverChange ){
 				if( hover !== null ){
 					this._event.hoverChange( this._data[hover] );
-					this._setCursor('pointer');
 				}else{
 					this._event.hoverChange( null );
-					this._setCursor('');
 				}
 			}
+
 			this._lastHover = hover;
 		}
 
 		if( this._cursor.click ){
+
 			if( this._event.click ){
 				if( hover !== null ){
 					this._event.click( this._data[hover] );
 				}
 			}
+
 			this._cursor.click = false;
 		}
 	},

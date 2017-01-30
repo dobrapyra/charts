@@ -66,20 +66,6 @@
 						hide: 500,
 						mouseenter: 300,
 						mouseleave: 200
-					},
-					event: {
-						hoverChange: function( data ){
-							if( data !== null ){
-								// console.log( 'hoverChange: ' + data.val + ' - ' + data.label );
-								console.log( '%c' + 'hoverChange: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
-							}else{
-								console.log( 'hoverChange: null' );
-							}
-						},
-						click: function( data ){
-							// console.log( 'click: ' + data.val + ' - ' + data.label );
-							console.log( '%c' + 'click: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
-						}
 					}
 				};
 
@@ -130,20 +116,6 @@
 						hide: 500,
 						mouseenter: 300,
 						mouseleave: 200
-					},
-					event: {
-						hoverChange: function( data ){
-							if( data !== null ){
-								// console.log( 'hoverChange: ' + data.val + ' - ' + data.label );
-								console.log( '%c' + 'hoverChange: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
-							}else{
-								console.log( 'hoverChange: null' );
-							}
-						},
-						click: function( data ){
-							// console.log( 'click: ' + data.val + ' - ' + data.label );
-							console.log( '%c' + 'click: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
-						}
 					}
 				};
 
@@ -194,6 +166,55 @@
 						hide: 500,
 						mouseenter: 300,
 						mouseleave: 200
+					}
+				};
+
+				var pieChart03 = new PieChart( pieChart03Config );
+
+				var pieChart03show = document.getElementById('pieChart03-show');
+				pieChart03show.addEventListener('click', function(e){
+					pieChart03.show();
+				});
+
+				var pieChart03hide = document.getElementById('pieChart03-hide');
+				pieChart03hide.addEventListener('click', function(e){
+					pieChart03.hide();
+				});
+
+			</script>
+
+		</section>
+
+		<section class="exampleBox">
+			
+			<h3 class="exampleBox__title">Pie Chart 04 - ( custom events - see console - F12 )</h3>
+
+			<div class="exampleBox__chart">
+				<canvas id="pieChart04" width="320" height="320"></canvas>
+			</div>
+			
+			<div class="exampleBox__buttons">
+				<button class="button" id="pieChart04-show">Show chart</button>
+				<button class="button" id="pieChart04-hide">Hide chart</button>
+			</div>
+
+			<script type="text/javascript">
+
+				var pieChart04Config = {
+					id: "pieChart04",
+					title: "Pie Chart 04",
+					data: sampleData,
+					size: {
+						ri: 80,
+						ro: 140,
+						r2i: 140,
+						r2o: 160
+					},
+					time: {
+						show: 1000,
+						hide: 500,
+						mouseenter: 300,
+						mouseleave: 200
 					},
 					event: {
 						hoverChange: function( data ){
@@ -211,16 +232,16 @@
 					}
 				};
 
-				var pieChart03 = new PieChart( pieChart03Config );
+				var pieChart04 = new PieChart( pieChart04Config );
 
-				var pieChart03show = document.getElementById('pieChart03-show');
-				pieChart03show.addEventListener('click', function(e){
-					pieChart03.show();
+				var pieChart04show = document.getElementById('pieChart04-show');
+				pieChart04show.addEventListener('click', function(e){
+					pieChart04.show();
 				});
 
-				var pieChart03hide = document.getElementById('pieChart03-hide');
-				pieChart03hide.addEventListener('click', function(e){
-					pieChart03.hide();
+				var pieChart04hide = document.getElementById('pieChart04-hide');
+				pieChart04hide.addEventListener('click', function(e){
+					pieChart04.hide();
 				});
 
 			</script>
