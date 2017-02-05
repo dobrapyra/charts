@@ -129,3 +129,8 @@ canvas{
 	margin: 0;
 	overflow: auto;
 }
+
+.exampleBox__code code strong{
+	display: inline-block;
+	background-color: #e3e3e3;
+}

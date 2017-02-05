@@ -70,7 +70,7 @@ var sampleData = [
 new PieChart( {
 	id: "pieChart01",
 	title: "Pie Chart 01",
-	data: sampleData,
+	<strong>data: sampleData</strong>,
 	size: {
 		ri: 80,
 		ro: 140,
@@ -147,7 +147,7 @@ new PieChart( {
 	id: "pieChart02",
 	title: "Pie Chart 02",
 	data: sampleData,
-	total: 1000,
+	<strong>total: 1000</strong>,
 	size: {
 		ri: 80,
 		ro: 140,
@@ -224,7 +224,7 @@ new PieChart( {
 	id: "pieChart03",
 	title: "Pie Chart 03",
 	data: sampleData,
-	offset: 0.5 * Math.PI,
+	<strong>offset: 0.5 * Math.PI</strong>,
 	size: {
 		ri: 80,
 		ro: 140,
@@ -313,18 +313,18 @@ new PieChart( {
 		mouseenter: 300,
 		mouseleave: 200
 	},
-	event: {
-		hoverChange: function( data ){
-			if( data !== null ){
-				console.log( '%c' + 'hoverChange: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
-			}else{
-				console.log( 'hoverChange: null' );
-			}
-		},
-		click: function( data ){
-			console.log( '%c' + 'click: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
+	<strong>event: {
+	hoverChange: function( data ){
+		if( data !== null ){
+			console.log( '%c' + 'hoverChange: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
+		}else{
+			console.log( 'hoverChange: null' );
 		}
+	},
+	click: function( data ){
+		console.log( '%c' + 'click: ' + '%c' + data.val + ' - ' + data.label , '', 'color: ' + data.color );
 	}
+}</strong>
 } );
 						</code>
 					</pre>
